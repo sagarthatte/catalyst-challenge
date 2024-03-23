@@ -57,7 +57,24 @@ function processCsvData($fileName, $isDryRun, $db) {
 		die("File name is missing");
 	}
 
-	$filePath = "./";
+	$filePath = "./" . $fileName;
+	if (!file_exists($filePath) || !is_readable($filePath)) {
+		die("File does not exist or is not readable");
+	}
+
+	$handle = fopen($filePath, "r");
+
+	if ($handle === false) {
+		echo "Error in opening file \n";
+		exit;
+	}
+
+	// Based on sample file, we assume csv always has header and skip header line.
+	fgetcsv($handle);
+
+	while (($thisLine = fgetcsv($handle)) !== FALSE) {
+		var_dump($thisLine);
+	}
 
 }
 
