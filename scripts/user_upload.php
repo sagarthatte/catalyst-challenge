@@ -36,6 +36,21 @@ function displayHelpInfo() {
 	echo $helpInfo;
 }
 
+function createUsersTable($db) {
+	// Create table if doesn't already exist
+	$createTableSQL = "CREATE TABLE IF NOT EXISTS users (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		name VARCHAR(50),
+		surname VARCHAR(50),
+		email VARCHAR(100) UNIQUE
+	) ENGINE=InnoDB;";
+
+	if (!$db->query($createTableSQL)) {
+		die("Error creating table: " . $db->error . "\n");
+	}
+	echo "Table 'users' created successfully. \n";
+}
+
 // Exit if script hasn't being executed from command line
 if (php_sapi_name() !== 'cli') {
 	die("This script must be executed from the command line only.");
@@ -54,11 +69,17 @@ $db = connectToDB($cliOptions['h'], $cliOptions['u'], $cliOptions['p'], 'catalys
 if ($db->connect_error) {
 	die('Connection failed: ' . $db->connect_error);
 } else {
-	echo "Connection successful";
+	echo "Database Connection successful \n";
 }
+
+// Create users table if cli argument requests
+if (isset($cliOptions['create_table'])) {
+	createUsersTable($db);
+}
+
 /* TODO: To test and implement the following:
-	- Accept -u, -p, -h arguments along with database name (fixed) and connect
-	- Test create_table argument and associated functionality
+	- Accept -u, -p, -h arguments along with database name (fixed) and connect - DONE
+	- Test create_table argument and associated functionality - DONE
 	- Test dry_run functionality (i.e. only validate data and not insert)
 		* Invalid email error
 	- Test validate and insert into database
