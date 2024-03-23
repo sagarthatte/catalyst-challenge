@@ -42,15 +42,27 @@ function displayHelpInfo() {
 	echo $helpInfo;
 }
 
+// Exit if script hasn't being executed from command line
+if (php_sapi_name() !== 'cli') {
+	die("This script must be executed from the command line only.");
+}
 
-// First we always connect to database?
-//connectToDB($serverName, $userName, $password);
-displayHelpInfo();
+// Read command line arguments and take appropriate action
+$cliOptions = getopt("u:p:h", ["file:", "create_table", "dry_run", "help"]);
 
-// Fetch input from CLI
+// Only show help information if requested
+if (isset($cliOptions["help"])) {
+	displayHelpInfo();
+	exit;
+}
 
-// Based on input, do the needful
-// If --help is seen, return or print help information
-
+/* TODO: To test and implement the following:
+	- Accept -u, -p, -h arguments along with database name (fixed) and connect
+	- Test create_table argument and associated functionality
+	- Test dry_run functionality (i.e. only validate data and not insert)
+		* Invalid email error
+	- Test validate and insert into database
+	- Test file not found error output
+*/
 
 ?>
