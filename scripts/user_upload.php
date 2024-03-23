@@ -36,8 +36,8 @@ function displayHelpInfo() {
 	echo $helpInfo;
 }
 
+// Create Users Table if not exists
 function createUsersTable($db) {
-	// Create table if doesn't already exist
 	$createTableSQL = "CREATE TABLE IF NOT EXISTS users (
 		id INT AUTO_INCREMENT PRIMARY KEY,
 		name VARCHAR(50),
@@ -49,6 +49,11 @@ function createUsersTable($db) {
 		die("Error creating table: " . $db->error . "\n");
 	}
 	echo "Table 'users' created successfully. \n";
+}
+
+// Process data from csv file (dry run only OR process and insert)
+function processCsvData($fileName, $isDryRun, $db) {
+
 }
 
 // Exit if script hasn't being executed from command line
@@ -75,7 +80,15 @@ if ($db->connect_error) {
 // Create users table if cli argument requests
 if (isset($cliOptions['create_table'])) {
 	createUsersTable($db);
+	exit;	// No further action on this command instance
 }
+
+// Initiate CSV file processing if requested, we perform both dry run as well as conditional insert into db table in one function
+if (isset($cliOptions['file'])) {
+	processCsvData($cliOptions['file'], isset($cliOptions['dry_run']), $db);
+}
+
+
 
 /* TODO: To test and implement the following:
 	- Accept -u, -p, -h arguments along with database name (fixed) and connect - DONE
