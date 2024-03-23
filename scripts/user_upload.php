@@ -1,18 +1,12 @@
 <?php
 // Define variables
-$serverName = "localhost";
-$userName = "root";
-$password = "*****";
+
 
 // Define functions
 // Connect to database
-function connectToDB($server, $username, $password) {
-	$conn = mysqli_connect($server, $username, $password);
-	if (!$conn) {
-		die("Connection failed: " . $conn->connect_error);
-	} else {
-		echo "Connection successful!";
-	}
+function connectToDB($server, $username, $password, $dbname='catalyst') {
+	$connection = new mysqli($server, $username, $password, $dbname);
+	return $connection;
 }
 
 // Display help info
@@ -48,7 +42,7 @@ if (php_sapi_name() !== 'cli') {
 }
 
 // Read command line arguments and take appropriate action
-$cliOptions = getopt("u:p:h", ["file:", "create_table", "dry_run", "help"]);
+$cliOptions = getopt("u:p:h:", ["file:", "create_table", "dry_run", "help"]);
 
 // Only show help information if requested
 if (isset($cliOptions["help"])) {
@@ -56,6 +50,12 @@ if (isset($cliOptions["help"])) {
 	exit;
 }
 
+$db = connectToDB($cliOptions['h'], $cliOptions['u'], $cliOptions['p'], 'catalyst');
+if ($db->connect_error) {
+	die('Connection failed: ' . $db->connect_error);
+} else {
+	echo "Connection successful";
+}
 /* TODO: To test and implement the following:
 	- Accept -u, -p, -h arguments along with database name (fixed) and connect
 	- Test create_table argument and associated functionality
