@@ -69,11 +69,40 @@ function processCsvData($fileName, $isDryRun, $db) {
 		exit;
 	}
 
-	// Based on sample file, we assume csv always has header and skip header line.
+	// Based on sample file, assume CSV always has header and skip header line.
 	fgetcsv($handle);
 
 	while (($thisLine = fgetcsv($handle)) !== FALSE) {
-		var_dump($thisLine);
+		list($name, $surname, $email) = $thisLine;
+
+		// Validate email address using email validation filter
+		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			echo "Invalid email address: " . $email . "\n";
+			continue;	// Skip inserting this record
+		}
+
+		// Transform data into required format
+		$name = ucfirst(strtolower(trim($name)));
+		$surname = ucfirst(strtolower(trim($surname)));
+		$email = strtolower(trim($email));
+
+		// Insert into database if not dry run
+		if (!$isDryRun) {
+			$insertSQL = "INSERT INTO users(name, surname, email)
+				VALUES(?,?,?)
+			";
+
+			$stmt = $db->prepare($insertSQL);
+			$stmt->bind_param("sss", $name, $surname, $email);
+
+			if (!$stmt->execute()) {
+				echo "Error inserting record: " . $stmt->error . "\n";
+			} else {
+				echo "Record successfully inserted into users table for user with email: " . $email . "\n";
+			}
+			$stmt->close();
+
+		}
 	}
 
 }
