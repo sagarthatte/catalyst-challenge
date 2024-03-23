@@ -53,6 +53,11 @@ function createUsersTable($db) {
 
 // Process data from csv file (dry run only OR process and insert)
 function processCsvData($fileName, $isDryRun, $db) {
+	if(!isset($fileName)) {
+		die("File name is missing");
+	}
+
+	$filePath = "./";
 
 }
 
