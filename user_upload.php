@@ -53,13 +53,20 @@ function createUsersTable($db) {
 
 // Process data from csv file (dry run only OR process and insert)
 function processCsvData($fileName, $isDryRun, $db) {
+	// Empty filename value
 	if(!isset($fileName)) {
 		die("File name is missing");
 	}
 
+	// If file not found
 	$filePath = "./" . $fileName;
 	if (!file_exists($filePath) || !is_readable($filePath)) {
 		die("File does not exist or is not readable");
+	}
+
+	// If not a dry run, always create the users table first (if not exists) in anticipation of inserts.
+	if (!$isDryRun) {
+		createUsersTable($db);
 	}
 
 	$handle = fopen($filePath, "r");
@@ -72,19 +79,25 @@ function processCsvData($fileName, $isDryRun, $db) {
 	// Based on sample file, assume CSV always has header and skip header line.
 	fgetcsv($handle);
 
+	$totalRecordsProcessed = 0;
+	$totalFaultyRecords = 0;
+	$faultyEmails = [];
 	while (($thisLine = fgetcsv($handle)) !== FALSE) {
+		$totalRecordsProcessed++;
 		list($name, $surname, $email) = $thisLine;
-
-		// Validate email address using email validation filter
-		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			echo "Invalid email address: " . $email . "\n";
-			continue;	// Skip inserting this record
-		}
 
 		// Transform data into required format
 		$name = ucfirst(strtolower(trim($name)));
 		$surname = ucfirst(strtolower(trim($surname)));
 		$email = strtolower(trim($email));
+
+		// Validate email address using email validation filter
+		if (!filter_var(strtolower(trim($email)), FILTER_VALIDATE_EMAIL)) {
+			$totalFaultyRecords++;
+			array_push($faultyEmails, $email);
+			echo "Invalid email address: " . $email . "\n";
+			continue;	// Skip inserting this record
+		}
 
 		// Insert into database if not dry run
 		if (!$isDryRun) {
@@ -104,6 +117,9 @@ function processCsvData($fileName, $isDryRun, $db) {
 
 		}
 	}
+	echo "Summary: \n";
+	echo "Total records processed: " . $totalRecordsProcessed . "\n";
+	echo "Total records with invalid email address: " . $totalFaultyRecords . "( " . implode(", ", $faultyEmails) . ") \n";
 
 }
 
@@ -145,9 +161,9 @@ if (isset($cliOptions['file'])) {
 	- Accept -u, -p, -h arguments along with database name (fixed) and connect - DONE
 	- Test create_table argument and associated functionality - DONE
 	- Test dry_run functionality (i.e. only validate data and not insert)
-		* Invalid email error
-	- Test validate and insert into database
-	- Test file not found error output
+		* Invalid email error (This should be outputted but continues processing other records)
+	- Test validate and insert into database - DONE
+	- Test file not found error output - DONE
 */
 
 ?>
