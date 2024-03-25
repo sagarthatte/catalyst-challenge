@@ -19,8 +19,6 @@
         - ChatGPT was used to get a basic idea of the type of commands to be expected to be run for the script task based on the expectations overall. The question specifically asked was 'I need to create a PHP script file that needs to be executed from the CLI and needs to either display help information using --help OR create a table in the MYSQL Database OR process csv file and insert records into the database table. Given this requirement, what is the list of commands that I would need to prepare for and how would they look like in the CLI?'
         - I also used some google and stack overflow, to configure MySQL correctly with PHP. Some google help was also used to refresh my memory regarding certain PHP method usages. Example: Methods to open csv file, etc.
 
-# ---------------------------------------------------------------------------------------------------------------------------------------------------------#
-
 # 2 - Logic Test
 - This script can again be found in the root directory 'catalyst-challenge' as requested. File name is 'foobar.php'.
 - Script can be executed from command line using `php foobar.php` command.
