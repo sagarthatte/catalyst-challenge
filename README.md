@@ -1,6 +1,8 @@
 # CatalystIT Coding Challenge
 # Tools used - Windows OS based AWS workspace, VSCode IDE, PHP 8.0.30, MYSQL 8.0
 
+# Assumption: MYSQL Server has been installed and configured with the PHP project and database already exists (DB name: catalyst)
+
 # 1 - Script Task
 - The script task can be found in the root directory 'catalyst-challenge' as a php script file named 'user_upload.php' as requested
 - The script can be run/executed from the command line (git bash was used in my case).
